@@ -1,0 +1,4 @@
+name: Pipies
+version: '${project.version}'
+main: at.haha007.pipies.Pipies
+api-version: '1.20'
