@@ -1,4 +1,4 @@
-name: Pipies
+name: '${project.name}'
 version: '${project.version}'
-main: at.haha007.pipies.Pipies
+main: at.haha007.edenpipes.EdenPipesPlugin
 api-version: '1.20'

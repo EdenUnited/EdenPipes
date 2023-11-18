@@ -1,4 +1,4 @@
-package at.haha007.pipies;
+package at.haha007.edenpipes;
 
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -17,10 +17,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 public class FilterListener implements Listener {
-    private static final NamespacedKey USE_EXACT_KEY = new NamespacedKey(Pipies.INSTANCE, "exact");
-    private static final NamespacedKey USE_AS_WHITE_LIST = new NamespacedKey(Pipies.INSTANCE, "white");
-    private static final NamespacedKey MATERIAL_KEY = new NamespacedKey(Pipies.INSTANCE, "material");
-    private static final NamespacedKey EXACT_KEY = new NamespacedKey(Pipies.INSTANCE, "material");
+    private static final NamespacedKey USE_EXACT_KEY = new NamespacedKey(EdenPipesPlugin.INSTANCE, "exact");
+    private static final NamespacedKey USE_AS_WHITE_LIST = new NamespacedKey(EdenPipesPlugin.INSTANCE, "white");
+    private static final NamespacedKey MATERIAL_KEY = new NamespacedKey(EdenPipesPlugin.INSTANCE, "material");
+    private static final NamespacedKey EXACT_KEY = new NamespacedKey(EdenPipesPlugin.INSTANCE, "material");
 
 
     @EventHandler

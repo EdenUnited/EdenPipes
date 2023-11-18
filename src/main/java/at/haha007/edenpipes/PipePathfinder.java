@@ -1,4 +1,4 @@
-package at.haha007.pipies;
+package at.haha007.edenpipes;
 
 import com.destroystokyo.paper.MaterialTags;
 import org.bukkit.Material;

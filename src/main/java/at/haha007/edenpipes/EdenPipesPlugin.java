@@ -1,4 +1,4 @@
-package at.haha007.pipies;
+package at.haha007.edenpipes;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,8 +16,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Comparator;
 import java.util.HashMap;
 
-public final class Pipies extends JavaPlugin implements Listener {
-    public static Pipies INSTANCE;
+public final class EdenPipesPlugin extends JavaPlugin implements Listener {
+    public static EdenPipesPlugin INSTANCE;
 
     @Override
     public void onLoad() {

@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>at.haha007</groupId>
-    <artifactId>Pipies</artifactId>
+    <artifactId>EdenPipes</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
-    <name>Pipies</name>
+    <name>EdenPipes</name>
 
     <properties>
         <java.version>17</java.version>

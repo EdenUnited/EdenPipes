@@ -1,4 +1,4 @@
-package at.haha007.pipies;
+package at.haha007.edenpipes;
 
 import org.bukkit.block.Block;
 import org.bukkit.event.Cancellable;
@@ -8,10 +8,10 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The PipePullEvent class is a custom event class that extends the Event class from the Bukkit API.
- * It represents an event where a pipe pulls items from a container, and provides information about the container block, piston block, and item being pulled.
+ * The PipePutEvent class is a custom event class that extends the Event class from the Bukkit API.
+ * It represents an event where a pipe puts items into a container, and provides information about the container block, piston block, item being put, and the path the item takes.
  */
-public class PipePullEvent extends Event implements Cancellable {
+public class PipePutEvent extends Event implements Cancellable {
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
     /**
@@ -34,14 +34,18 @@ public class PipePullEvent extends Event implements Cancellable {
         return HANDLER_LIST;
     }
 
-    private final Block container;
-    private final Block piston;
+    private final Block sourceContainer;
+    private final Block targetContainer;
+    private final Block sourcePiston;
+    private final Block targetPiston;
     private final ItemStack item;
     private boolean cancelled = false;
 
-    public PipePullEvent(Block container, Block piston, ItemStack item) {
-        this.container = container;
-        this.piston = piston;
+    public PipePutEvent(Block sourceContainer, Block targetContainer, Block sourcePiston, Block targetPiston, ItemStack item) {
+        this.sourceContainer = sourceContainer;
+        this.targetContainer = targetContainer;
+        this.sourcePiston = sourcePiston;
+        this.targetPiston = targetPiston;
         this.item = item;
     }
 
@@ -50,8 +54,8 @@ public class PipePullEvent extends Event implements Cancellable {
      *
      * @return the container block
      */
-    public Block getContainer() {
-        return container;
+    public Block getSourceContainer() {
+        return sourceContainer;
     }
 
     /**
@@ -59,12 +63,30 @@ public class PipePullEvent extends Event implements Cancellable {
      *
      * @return the piston block
      */
-    public Block getPiston() {
-        return piston;
+    public Block getTargetContainer() {
+        return targetContainer;
     }
 
     /**
-     * Get the item being pulled.
+     * Get the piston block.
+     *
+     * @return the piston block
+     */
+    public Block getSourcePiston() {
+        return sourcePiston;
+    }
+
+    /**
+     * Get the piston block.
+     *
+     * @return the piston block
+     */
+    public Block getTargetPiston() {
+        return targetPiston;
+    }
+
+    /**
+     * Get the item being put.
      *
      * @return the item
      */
