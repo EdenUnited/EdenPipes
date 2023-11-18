@@ -17,15 +17,22 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 public final class Pipies extends JavaPlugin implements Listener {
+    public static Pipies INSTANCE;
+
+    @Override
+    public void onLoad() {
+        INSTANCE = this;
+    }
 
     @Override
     public void onEnable() {
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new FilterListener(), this);
+        getServer().getPluginManager().registerEvents(new CraftbookFilterListener(), this);
     }
 
     @EventHandler
     public void onRedstoneUpdate(BlockRedstoneEvent event) {
-        System.out.println("Redstone update: " + event.getBlock());
         Block block = event.getBlock();
         Block[] blocks = new Block[]{
                 block.getRelative(0, 0, 1),
@@ -43,16 +50,13 @@ public final class Pipies extends JavaPlugin implements Listener {
     }
 
     private void startPipe(Block sourcePistonBlock) {
-        System.out.println("Starting pipe: " + sourcePistonBlock);
         BlockData blockData = sourcePistonBlock.getBlockData();
         if (!(blockData instanceof Piston sourcePiston))
             return;
-        System.out.println("Piston: " + sourcePiston);
         Block sourceInventoryBlock = sourcePistonBlock.getRelative(sourcePiston.getFacing());
         BlockState state = sourceInventoryBlock.getState(false);
         if (!(state instanceof Container container))
             return;
-        System.out.println("Container: " + container);
         Inventory sourceInventory = container.getInventory();
         ItemStack item = null;
         int sourceItemIndex = 0;
@@ -64,16 +68,13 @@ public final class Pipies extends JavaPlugin implements Listener {
         }
         if (item == null)
             return;
-        System.out.println("Item: " + item);
         PipePathfinder pipePathfinder = new PipePathfinder(sourcePistonBlock);
         PipePathfinder.PathResult pathResult = pipePathfinder.findNext();
-        System.out.println("Path result: " + pathResult.targetPiston());
-        while (pathResult != null) {
+        while (pathResult.state() == PipePathfinder.State.FOUND_TARGET) {
             Block targetPistonBlock = pathResult.targetPiston();
             Piston targetPiston = (Piston) targetPistonBlock.getBlockData();
             Block targetInventoryBlock = targetPistonBlock.getRelative(targetPiston.getFacing());
             BlockState targetState = targetInventoryBlock.getState(false);
-            System.out.println("Target block" + targetInventoryBlock);
             if (!(targetState instanceof Container targetContainer))
                 return;
             PipePutEvent event = new PipePutEvent(sourceInventoryBlock, targetInventoryBlock, sourcePistonBlock, targetPistonBlock, item);
@@ -84,7 +85,6 @@ public final class Pipies extends JavaPlugin implements Listener {
             }
             HashMap<Integer, ItemStack> remaining = targetContainer.getInventory().addItem(item);
             ItemStack min = remaining.values().stream().min(Comparator.comparingInt(ItemStack::getAmount)).orElse(null);
-            System.out.println("Remaining: " + min);
             sourceInventory.setItem(sourceItemIndex, min);
             if (min == null) return;
             item = min;

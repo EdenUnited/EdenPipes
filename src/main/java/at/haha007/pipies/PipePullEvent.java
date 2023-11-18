@@ -1,6 +1,7 @@
 package at.haha007.pipies;
 
 import org.bukkit.block.Block;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  * The PipePullEvent class is a custom event class that extends the Event class from the Bukkit API.
  * It represents an event where a pipe pulls items from a container, and provides information about the container block, piston block, and item being pulled.
  */
-public class PipePullEvent extends Event {
+public class PipePullEvent extends Event implements Cancellable {
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
     /**

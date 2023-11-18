@@ -30,6 +30,7 @@ public class PipePathfinder {
         getNeighbors(source).forEach(this::enqueue);
     }
 
+    @NotNull
     public PathResult findNext() {
         Block block;
         while (!frontier.isEmpty()) {
