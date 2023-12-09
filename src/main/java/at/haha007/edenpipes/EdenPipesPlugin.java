@@ -68,7 +68,11 @@ public final class EdenPipesPlugin extends JavaPlugin implements Listener {
         }
         if (item == null)
             return;
-        PipePathfinder pipePathfinder = new PipePathfinder(sourcePistonBlock);
+        PipePullEvent pullEvent = new PipePullEvent(sourceInventoryBlock, sourcePistonBlock, item);
+        getServer().getPluginManager().callEvent(pullEvent);
+        if (pullEvent.isCancelled())
+            return;
+        PipePathfinder pipePathfinder = new PipePathfinder(sourcePistonBlock, sourceInventoryBlock, item);
         PipePathfinder.PathResult pathResult = pipePathfinder.findNext();
         while (pathResult.state() == PipePathfinder.State.FOUND_TARGET) {
             Block targetPistonBlock = pathResult.targetPiston();
@@ -77,9 +81,9 @@ public final class EdenPipesPlugin extends JavaPlugin implements Listener {
             BlockState targetState = targetInventoryBlock.getState(false);
             if (!(targetState instanceof Container targetContainer))
                 return;
-            PipePutEvent event = new PipePutEvent(sourceInventoryBlock, targetInventoryBlock, sourcePistonBlock, targetPistonBlock, item);
-            getServer().getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
+            PipePutEvent putEvent = new PipePutEvent(sourceInventoryBlock, targetInventoryBlock, sourcePistonBlock, targetPistonBlock, item);
+            getServer().getPluginManager().callEvent(putEvent);
+            if (putEvent.isCancelled()) {
                 pathResult = pipePathfinder.findNext();
                 continue;
             }
@@ -87,7 +91,7 @@ public final class EdenPipesPlugin extends JavaPlugin implements Listener {
             ItemStack min = remaining.values().stream().min(Comparator.comparingInt(ItemStack::getAmount)).orElse(null);
             sourceInventory.setItem(sourceItemIndex, min);
             if (min == null) return;
-            item = min;
+            item.setAmount(min.getAmount());
             pathResult = pipePathfinder.findNext();
         }
     }

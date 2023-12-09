@@ -1,11 +1,13 @@
 package at.haha007.edenpipes;
 
 import com.destroystokyo.paper.MaterialTags;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.type.Piston;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -15,6 +17,7 @@ import java.util.stream.Stream;
  * Helper class for bfs search
  */
 public class PipePathfinder {
+
     public enum State {
         FOUND_TARGET,
         NO_TARGET
@@ -25,9 +28,15 @@ public class PipePathfinder {
 
     private final Queue<Block> frontier = new LinkedList<>();
     private final Set<Block> visited = new HashSet<>();
+    private final Block sourcePiston;
+    private final Block sourceContainer;
+    private final ItemStack item;
 
-    public PipePathfinder(@NotNull Block source) {
-        getNeighbors(source).forEach(this::enqueue);
+    public PipePathfinder(@NotNull Block sourcePiston, @NotNull Block sourceContainer, @NotNull ItemStack item) {
+        getNeighbors(sourcePiston).forEach(this::enqueue);
+        this.sourcePiston = sourcePiston;
+        this.sourceContainer = sourceContainer;
+        this.item = item;
     }
 
     @NotNull
@@ -50,7 +59,7 @@ public class PipePathfinder {
 
         if (material == Material.PISTON || material == Material.GLASS) {
             getNeighbors(block).forEach(this::enqueue);
-        }else if(MaterialTags.STAINED_GLASS.isTagged(material)){
+        } else if (MaterialTags.STAINED_GLASS.isTagged(material)) {
             getNeighbors(block).stream()
                     .filter(b -> b.getType() == Material.PISTON || b.getType() == Material.GLASS || b.getType() == material)
                     .forEach(this::enqueue);
@@ -88,6 +97,10 @@ public class PipePathfinder {
                 .filter(b -> {
                     if (b.getType() != Material.PISTON) return true;
                     Piston piston = (Piston) b.getBlockData();
+                    PipePutEvent event = new PipePutEvent(sourceContainer,null, sourcePiston, b, item);
+                    Bukkit.getPluginManager().callEvent(event);
+                    if (event.isCancelled())
+                        return false;
                     return !b.getRelative(piston.getFacing()).equals(block);
                 })
                 .toList();

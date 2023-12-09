@@ -1,9 +1,14 @@
 package at.haha007.edenpipes;
 
+import lombok.Getter;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.HangingSign;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.WallSign;
 import org.bukkit.block.sign.Side;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -51,45 +56,40 @@ public class CraftbookFilterListener implements Listener {
             return;
         Block piston = event.getTargetPiston();
         ItemStack item = event.getItem();
-        Optional<SignData> sign = getAttachedSigns(piston).filter(this::isPipe).findFirst();
+        Optional<SignData> sign = getAttachedSigns(piston).filter(this::isPipeSign).findFirst();
         if (sign.isEmpty())
             return;
         String[] lines = sign.get().getLines();
         String[] whitelist = lines[2].toLowerCase().split(",");
         if (!matches(item, whitelist, true)) {
             event.setCancelled(true);
-            System.out.println("Cancelled PUT WHITELIST -> " + String.join(",", whitelist) + "  " + piston);
             return;
         }
         String[] blacklist = lines[3].toLowerCase().split(",");
         if (matches(item, blacklist, false)) {
             event.setCancelled(true);
-            System.out.println("Cancelled PUT BLACKLIST -> " + String.join(",", blacklist) + "  " + piston);
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     void onPipePull(PipePullEvent event) {
         if (!hasCraftBook)
             return;
         Block piston = event.getPiston();
         ItemStack item = event.getItem();
-        Optional<SignData> sign = getAttachedSigns(piston).filter(this::isPipe).findFirst();
+        Optional<SignData> sign = getAttachedSigns(piston).filter(this::isPipeSign).findFirst();
         if (sign.isEmpty())
             return;
         String[] lines = sign.get().getLines();
         String[] whitelist = lines[2].toLowerCase().split(",");
         if (!matches(item, whitelist, true)) {
             event.setCancelled(true);
-            System.out.println("Cancelled PULL WHITELIST -> " + String.join(",", whitelist) + "  " + piston);
             return;
         }
         String[] blacklist = lines[3].toLowerCase().split(",");
         if (matches(item, blacklist, false)) {
             event.setCancelled(true);
-            System.out.println("Cancelled PULL BLACKLIST -> " + String.join(",", blacklist) + "  " + piston);
         }
-
     }
 
     private boolean matches(ItemStack item, String[] strings, boolean defaultValue) {
@@ -106,7 +106,7 @@ public class CraftbookFilterListener implements Listener {
         return false;
     }
 
-    private boolean isPipe(SignData signData) {
+    private boolean isPipeSign(SignData signData) {
         return signData.getLine(1).equals("[Pipe]");
     }
 
@@ -133,16 +133,25 @@ public class CraftbookFilterListener implements Listener {
     }
 
     private class SignData {
-        private final org.bukkit.block.data.type.Sign data;
+        private final BlockFace facing;
+        @Getter
         private final String[] lines;
         private final Sign state;
 
         public SignData(Block block) {
-            if (!(block.getBlockData() instanceof org.bukkit.block.data.type.Sign))
-                throw new IllegalArgumentException("Block is not a Sign");
+            BlockData blockData = block.getBlockData();
             if (!(block.getState(false) instanceof Sign))
                 throw new IllegalArgumentException("Block is not a Sign");
-            this.data = (org.bukkit.block.data.type.Sign) block.getBlockData();
+            if (blockData instanceof HangingSign) {
+                facing = BlockFace.UP;
+            } else if (blockData instanceof Sign) {
+                facing = BlockFace.DOWN;
+            } else if (blockData instanceof WallSign sign) {
+                facing = sign.getFacing().getOppositeFace();
+            } else {
+                throw new IllegalArgumentException("Block is not a Sign");
+            }
+
             this.state = (Sign) block.getState(false);
             lines = state.getSide(Side.FRONT).lines()
                     .stream()
@@ -159,11 +168,7 @@ public class CraftbookFilterListener implements Listener {
         }
 
         public Block getAttachedTo() {
-            return state.getBlock().getRelative(data.getRotation());
-        }
-
-        public String[] getLines() {
-            return lines;
+            return state.getBlock().getRelative(facing);
         }
 
         public String getLine(int index) {

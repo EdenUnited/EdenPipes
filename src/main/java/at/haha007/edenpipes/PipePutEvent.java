@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The PipePutEvent class is a custom event class that extends the Event class from the Bukkit API.
  * It represents an event where a pipe puts items into a container, and provides information about the container block, piston block, item being put, and the path the item takes.
+ * This event is fired when an item is put into a container or into another pipe, basically every time a item passes a piston.
  */
 public class PipePutEvent extends Event implements Cancellable {
     private static final HandlerList HANDLER_LIST = new HandlerList();
@@ -60,6 +61,7 @@ public class PipePutEvent extends Event implements Cancellable {
 
     /**
      * Get the piston block.
+     * May not be a container, this gets also called when the piston is in the middle of the pipe
      *
      * @return the piston block
      */
