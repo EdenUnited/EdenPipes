@@ -27,7 +27,7 @@ public final class EdenPipesPlugin extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new FilterListener(), this);
+        getServer().getPluginManager().registerEvents(new DefaultFilterListener(), this);
         getServer().getPluginManager().registerEvents(new CraftbookFilterListener(), this);
     }
 

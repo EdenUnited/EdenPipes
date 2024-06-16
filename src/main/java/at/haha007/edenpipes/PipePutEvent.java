@@ -1,5 +1,7 @@
 package at.haha007.edenpipes;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.block.Block;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -12,25 +14,17 @@ import org.jetbrains.annotations.NotNull;
  * It represents an event where a pipe puts items into a container, and provides information about the container block, piston block, item being put, and the path the item takes.
  * This event is fired when an item is put into a container or into another pipe, basically every time a item passes a piston.
  */
+@Getter
 public class PipePutEvent extends Event implements Cancellable {
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
-    /**
-     * Get the handler list for this event. {@link HandlerList}.
-     *
-     * @return the handler list
-     */
     @Override
     @NotNull
     public HandlerList getHandlers() {
         return HANDLER_LIST;
     }
 
-    /**
-     * Get the handler list for this event. {@link HandlerList#getHandlerLists()}.
-     *
-     * @return the handler list
-     */
+    //Used by Bukkit, needed by every class that extends Event
     public static HandlerList getHandlerList() {
         return HANDLER_LIST;
     }
@@ -40,6 +34,7 @@ public class PipePutEvent extends Event implements Cancellable {
     private final Block sourcePiston;
     private final Block targetPiston;
     private final ItemStack item;
+    @Setter
     private boolean cancelled = false;
 
     public PipePutEvent(Block sourceContainer, Block targetContainer, Block sourcePiston, Block targetPiston, ItemStack item) {
@@ -48,69 +43,5 @@ public class PipePutEvent extends Event implements Cancellable {
         this.sourcePiston = sourcePiston;
         this.targetPiston = targetPiston;
         this.item = item;
-    }
-
-    /**
-     * Get the container block.
-     *
-     * @return the container block
-     */
-    public Block getSourceContainer() {
-        return sourceContainer;
-    }
-
-    /**
-     * Get the piston block.
-     * May not be a container, this gets also called when the piston is in the middle of the pipe
-     *
-     * @return the piston block
-     */
-    public Block getTargetContainer() {
-        return targetContainer;
-    }
-
-    /**
-     * Get the piston block.
-     *
-     * @return the piston block
-     */
-    public Block getSourcePiston() {
-        return sourcePiston;
-    }
-
-    /**
-     * Get the piston block.
-     *
-     * @return the piston block
-     */
-    public Block getTargetPiston() {
-        return targetPiston;
-    }
-
-    /**
-     * Get the item being put.
-     *
-     * @return the item
-     */
-    public ItemStack getItem() {
-        return item;
-    }
-
-    /**
-     * Check if the event is cancelled.
-     *
-     * @return true if the event is cancelled
-     */
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    /**
-     * Set if the event is cancelled.
-     *
-     * @param cancelled true if the event is cancelled
-     */
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
     }
 }

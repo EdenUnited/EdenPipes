@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
-public class FilterListener implements Listener {
+public class DefaultFilterListener implements Listener {
     private static final NamespacedKey USE_EXACT_KEY = new NamespacedKey(EdenPipesPlugin.INSTANCE, "use_exact");
     private static final NamespacedKey USE_AS_WHITE_LIST = new NamespacedKey(EdenPipesPlugin.INSTANCE, "whitelist");
     private static final NamespacedKey ITEMS = new NamespacedKey(EdenPipesPlugin.INSTANCE, "items");

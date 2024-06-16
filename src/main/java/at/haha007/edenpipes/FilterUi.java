@@ -23,13 +23,13 @@ import java.util.function.Function;
 //WHITELIST/BLACKLIST
 
 public class FilterUi {
-    private final FilterListener.SignData signData;
+    private final DefaultFilterListener.SignData signData;
     private ChestGui mainGui;
     private AnvilGui mainGuiSearch;
     private ChestGui collectionGui;
     private AnvilGui collectionSearch;
 
-    public FilterUi(@NotNull FilterListener.SignData signData) {
+    public FilterUi(@NotNull DefaultFilterListener.SignData signData) {
         this.signData = signData;
     }
 
